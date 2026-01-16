@@ -27,12 +27,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Alternatively, you can still use the old entry point:
-
-```bash
-python app.py
-```
-
 2. Open your web browser and navigate to the URL shown in the terminal (typically `http://localhost:7860`)
 
 3. Use the interface to:
@@ -56,7 +50,6 @@ Pixellate/
 │   ├── image_processor.py  # Image processing logic
 │   └── ui.py            # Gradio UI components
 ├── main.py              # Main entry point
-├── app.py               # Legacy entry point (still supported)
 ├── requirements.txt     # Python dependencies
 └── README.md           # This file
 ```
