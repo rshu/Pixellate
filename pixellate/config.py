@@ -43,7 +43,7 @@ class Config:
     scale_factor_step: float = 0.05
     
     # Server settings
-    server_name: str = "0.0.0.0"
+    server_name: str = "127.0.0.1"
     server_port: int = 7860
 
 

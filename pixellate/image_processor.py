@@ -20,35 +20,43 @@ class ImageProcessor:
         """
         self.config = config or DEFAULT_CONFIG
     
-    def crop_to_square(self, image: Image.Image, crop_size_pixels: int) -> Image.Image:
+    def crop_to_ratio(self, image: Image.Image, crop_size_pixels: int) -> Image.Image:
         """
-        Crop image to a square of the specified size in pixels.
+        Crop image maintaining the original aspect ratio.
+        The crop_size_pixels represents the size of the smaller dimension.
         
         Args:
             image: Input PIL Image
-            crop_size_pixels: Size of the square crop in pixels
+            crop_size_pixels: Size of the smaller dimension in pixels
             
         Returns:
-            Cropped square image
+            Cropped image maintaining original aspect ratio
         """
         width, height = image.size
-        min_dim = min(width, height)
+        aspect_ratio = width / height
+        
+        # Calculate crop dimensions maintaining aspect ratio
+        if width >= height:
+            # Landscape or square: crop_size_pixels is the height
+            crop_height = crop_size_pixels
+            crop_width = int(crop_size_pixels * aspect_ratio)
+        else:
+            # Portrait: crop_size_pixels is the width
+            crop_width = crop_size_pixels
+            crop_height = int(crop_size_pixels / aspect_ratio)
+        
+        # Ensure crop dimensions don't exceed image dimensions
+        crop_width = min(crop_width, width)
+        crop_height = min(crop_height, height)
         
         # Calculate crop box (center crop)
-        left = (width - min_dim) // 2
-        top = (height - min_dim) // 2
-        right = left + min_dim
-        bottom = top + min_dim
+        left = (width - crop_width) // 2
+        top = (height - crop_height) // 2
+        right = left + crop_width
+        bottom = top + crop_height
         
-        # Crop to square
+        # Crop maintaining aspect ratio
         cropped = image.crop((left, top, right, bottom))
-        
-        # Resize to target size if needed
-        if min_dim != crop_size_pixels:
-            cropped = cropped.resize(
-                (crop_size_pixels, crop_size_pixels), 
-                Image.Resampling.LANCZOS
-            )
         
         return cropped
     
@@ -190,7 +198,7 @@ class ImageProcessor:
         
         Args:
             image: Input PIL Image
-            crop_size_inches: Size in inches for cropping (assumes square crop)
+            crop_size_inches: Size in inches for cropping (smaller dimension, maintains aspect ratio)
             target_width: Target width in pixels
             target_height: Target height in pixels
             max_file_size_mb: Maximum file size in MB
@@ -205,8 +213,9 @@ class ImageProcessor:
         
         try:
             # Step 1: Crop to specified inches (convert inches to pixels)
+            # crop_size_inches represents the smaller dimension, maintaining aspect ratio
             crop_size_pixels = int(crop_size_inches * dpi)
-            cropped = self.crop_to_square(image, crop_size_pixels)
+            cropped = self.crop_to_ratio(image, crop_size_pixels)
             
             # Step 2: Resize to target resolution
             processed = cropped.resize(

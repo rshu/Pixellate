@@ -32,7 +32,7 @@ python main.py
 3. Use the interface to:
    - Upload your photo
    - Adjust settings:
-     - **Crop Size (inches)**: Size for the initial square crop (default: 2 inches)
+     - **Crop Size (inches)**: Size for the smaller dimension, maintaining original aspect ratio (default: 2 inches)
      - **DPI**: Dots per inch for inch-to-pixel conversion (default: 300)
      - **Target Width/Height**: Final resolution in pixels (default: 461 x 579)
      - **Max File Size**: Maximum file size in MB (default: 1 MB)
@@ -56,7 +56,7 @@ Pixellate/
 
 ## How It Works
 
-1. The image is first cropped to a square based on the specified inch size and DPI
+1. The image is first cropped maintaining its original aspect ratio, with the crop size representing the smaller dimension (converted from inches to pixels using DPI)
 2. The cropped image is then resized to the target resolution
 3. The image is compressed (quality adjusted for JPG, optimization for PNG) to meet the file size requirement
 4. The final image is exported in the selected format
